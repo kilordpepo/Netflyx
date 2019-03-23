@@ -8,7 +8,8 @@ const initialState = {
       artist: "The Strokes",
       album: "Room on Fire",
       photo: "https://i.ibb.co/02BvcgS/reptilia.jpg",
-      rating: 4
+      rating: 4,
+      hover: 0
     },
     {
       id: 2,
@@ -16,7 +17,8 @@ const initialState = {
       artist: "Coldplay",
       album: "X&Y",
       photo: "https://i.ibb.co/YdYX00m/fixyou.jpg",
-      rating: 2
+      rating: 2,
+      hover: 0
     },
     {
       id: 3,
@@ -24,7 +26,8 @@ const initialState = {
       artist: "Weezer",
       album: "Weezer",
       photo: "https://i.ibb.co/mzBvcXt/takeonme.jpg",
-      rating: 5
+      rating: 5,
+      hover: 0
     },
     {
       id: 4,
@@ -32,7 +35,8 @@ const initialState = {
       artist: "Mike Shinoda",
       album: "Post Traumatic",
       photo: "https://i.ibb.co/QCS6LjT/proveyouwrong.jpg",
-      rating: 1
+      rating: 1,
+      hover: 0
     },
     {
       id: 5,
@@ -40,7 +44,8 @@ const initialState = {
       artist: "Red Hot Chili Peppers",
       album: "Californication",
       photo: "https://i.ibb.co/J20vcnk/otherside.jpg",
-      rating: 3
+      rating: 3,
+      hover: 0
     },
     {
       id: 6,
@@ -48,7 +53,8 @@ const initialState = {
       artist: "Elvis Presley",
       album: "From Memphis To Vegas/From Vegas to Memphis",
       photo: "https://i.ibb.co/pWYFTq5/elvis.jpg",
-      rating: 0
+      rating: 0,
+      hover: 0
     },
     {
       id: 7,
@@ -56,7 +62,8 @@ const initialState = {
       artist: "Linkin Park",
       album: "One More Light",
       photo: "https://i.ibb.co/Dw6nmzT/onemorelight.jpg",
-      rating: 5
+      rating: 5,
+      hover: 0
     },
     {
       id: 8,
@@ -64,7 +71,8 @@ const initialState = {
       artist: "Rammstein",
       album: "Sehnsucht",
       photo: "https://i.ibb.co/2t4vNmw/duhast.jpg",
-      rating: 0
+      rating: 0,
+      hover: 0
     },
     {
       id: 9,
@@ -72,7 +80,8 @@ const initialState = {
       artist: "Kygo",
       album: "Firestone",
       photo: "https://i.ibb.co/JC8NrZs/firestone.jpg",
-      rating: 2
+      rating: 2,
+      hover: 0
     },
     {
       id: 10,
@@ -80,7 +89,8 @@ const initialState = {
       artist: "Gorillaz",
       album: "Demon Days",
       photo: "https://i.ibb.co/XZqkctD/feelgoodinc.jpg",
-      rating: 3
+      rating: 3,
+      hover: 0
     }
   ]
 };
@@ -93,6 +103,15 @@ const songsReducer = (state = initialState, action) => {
         songs: state.songs.map(song =>
           song.id === action.payload.id
             ? { ...song, rating: action.payload.rating }
+            : song
+        )
+      };
+    case ACTIONS.CHANGE_HOVER:
+      return {
+        ...state,
+        songs: state.songs.map(song =>
+          song.id === action.payload.id
+            ? { ...song, hover: action.payload.rating }
             : song
         )
       };
