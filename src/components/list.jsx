@@ -64,13 +64,13 @@ class SongsList extends Component {
 
   handleChangeRate = (stars, songId, rating) => {
     const { changeFade } = this.props;
-    if (rating !== stars) {
-      changeFade(false).then(() =>
-        setTimeout(() => {
-          this.props.changeRate(stars, songId).then(res => changeFade(true));
-        }, 200)
+    /*if (rating !== stars) {
+      changeFade(false).then(() =>  
+        setTimeout(() => {*/
+    this.props.changeRate(stars, songId); //.then(res => changeFade(true));
+    /*  }, 200)
       );
-    }
+    } DESCOMENTAR TODO ESTE BLOQUE SI NO SE REALIZAN PRUEBAS, (HABILITA EL EFECTO DE FADE EN LOS ELEMENTOS CUANDO CAMBIA LA LISTA)*/
   };
   render = () => {
     const { classes, songs, fade } = this.props;
@@ -108,6 +108,7 @@ class SongsList extends Component {
                           <IconButton
                             aria-label={`${star}star`}
                             key={`${star}-song.id`}
+                            data-testid={`rate-${star}-${song.id}`}
                             onMouseEnter={() =>
                               song.rating < star
                                 ? this.handleChangeHover(star, song.id)
@@ -130,6 +131,9 @@ class SongsList extends Component {
                           </IconButton>
                         ))}
                       </div>
+                      <p hidden={true} data-testid={`rating-${song.id}`}>
+                        {song.rating}
+                      </p>
                     </div>
                     <CardMedia
                       className={classes.cover}
