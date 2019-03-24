@@ -58,13 +58,19 @@ class SongsList extends Component {
     };
   }
 
-  handleChangeHover = (rating, songId) => {
-    this.props.changeHover(rating, songId);
-  };
+  handleChangeHover = (stars, songId, rating) =>
+    this.props.changeHover(stars, songId);
 
-  handleChangeRate = (rating, songId) => {
-    this.props.changeRate(rating, songId);
-    this.setState({ fade: false }, () => this.setState({ fade: true }));
+  handleChangeRate = (stars, songId, rating) => {
+    if (rating !== stars) {
+      this.setState({ fade: false }, () =>
+        setTimeout(() => {
+          this.props
+            .changeRate(stars, songId)
+            .then(res => this.setState({ fade: true }));
+        }, 200)
+      );
+    }
   };
   render = () => {
     const { classes, songs } = this.props;
@@ -79,7 +85,7 @@ class SongsList extends Component {
             <Fragment key={song.id}>
               <Grid item xs={4} />
               <Grid item xs={4}>
-                <Fade in={fade} timeout={1000}>
+                <Fade in={fade} timeout={200}>
                   <Card className={classes.card}>
                     <div className={classes.details}>
                       <CardContent className={classes.content}>
@@ -113,7 +119,9 @@ class SongsList extends Component {
                                 ? this.handleChangeHover(0, song.id)
                                 : null
                             }
-                            onClick={() => this.handleChangeRate(star, song.id)}
+                            onClick={() =>
+                              this.handleChangeRate(star, song.id, song.rating)
+                            }
                           >
                             {song.rating >= star || song.hover >= star ? (
                               <Star />
