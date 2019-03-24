@@ -1,6 +1,8 @@
 import { ACTIONS } from "../actions/songs";
 
 const initialState = {
+  random: true,
+  fade: true,
   songs: [
     {
       id: 1,
@@ -114,6 +116,16 @@ const songsReducer = (state = initialState, action) => {
             ? { ...song, hover: action.payload.rating }
             : song
         )
+      };
+    case ACTIONS.RANDOMIZE:
+      return {
+        ...state,
+        ...action.payload
+      };
+    case ACTIONS.FADE:
+      return {
+        ...state,
+        ...action.payload
       };
     default:
       return state;

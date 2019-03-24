@@ -9,9 +9,9 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import StarBorder from "@material-ui/icons/StarBorderTwoTone";
 import Star from "@material-ui/icons/Star";
-import { changeHover, changeRate } from "../actions/songs";
 import Fade from "@material-ui/core/Fade";
 import { Grid } from "@material-ui/core";
+import { changeHover, changeRate, changeFade } from "../actions/songs";
 
 const styles = theme => ({
   card: {
@@ -63,19 +63,17 @@ class SongsList extends Component {
     this.props.changeHover(stars, songId);
 
   handleChangeRate = (stars, songId, rating) => {
+    const { changeFade } = this.props;
     if (rating !== stars) {
-      this.setState({ fade: false }, () =>
+      changeFade(false).then(() =>
         setTimeout(() => {
-          this.props
-            .changeRate(stars, songId)
-            .then(res => this.setState({ fade: true }));
+          this.props.changeRate(stars, songId).then(res => changeFade(true));
         }, 200)
       );
     }
   };
   render = () => {
-    const { classes, songs } = this.props;
-    const { fade } = this.state;
+    const { classes, songs, fade } = this.props;
     return (
       <Grid container spacing={16}>
         {songs
@@ -157,10 +155,11 @@ SongsList.propTypes = {
 SongsList = withStyles(styles, { withTheme: true })(SongsList);
 
 const mS = state => ({
-  songs: state.songsReducer.songs
+  songs: state.songsReducer.songs,
+  fade: state.songsReducer.fade
 });
 
-const mD = { changeHover, changeRate };
+const mD = { changeHover, changeRate, changeFade };
 
 SongsList = connect(
   mS,
