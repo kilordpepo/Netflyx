@@ -9,7 +9,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import StarBorder from "@material-ui/icons/StarBorderTwoTone";
 import Star from "@material-ui/icons/Star";
-import { changeHover } from "../actions/songs";
+import { changeHover, changeRate } from "../actions/songs";
+import Fade from "@material-ui/core/Fade";
 import { Grid } from "@material-ui/core";
 
 const styles = theme => ({
@@ -20,14 +21,13 @@ const styles = theme => ({
   details: {
     display: "flex",
     flexDirection: "column",
-    minWidth: "70%"
+    width: "70%"
   },
   content: {
     flex: "1 0 auto"
   },
   cover: {
-    width: 151,
-    minWidth: "30%"
+    width: "30%"
   },
   controls: {
     display: "flex",
@@ -51,103 +51,90 @@ const styles = theme => ({
 });
 
 class SongsList extends Component {
+  constructor() {
+    super();
+    this.state = {
+      fade: true
+    };
+  }
+
   handleChangeHover = (rating, songId) => {
     this.props.changeHover(rating, songId);
   };
+
+  handleChangeRate = (rating, songId) => {
+    this.props.changeRate(rating, songId);
+    this.setState({ fade: false }, () => this.setState({ fade: true }));
+  };
   render = () => {
-    const { classes, theme, songs } = this.props;
+    const { classes, songs } = this.props;
+    const { fade } = this.state;
     return (
       <Grid container spacing={16}>
-        {songs.map(song => (
-          <Fragment key={song.id}>
-            <Grid item xs={4} />
-            <Grid item xs={4}>
-              <Card className={classes.card}>
-                <div className={classes.details}>
-                  <CardContent className={classes.content}>
-                    <Typography
-                      component="h5"
-                      variant="h5"
-                      className={classes.title}
-                    >
-                      {song.name}
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
-                      color="textSecondary"
-                      className={classes.subtitle}
-                    >
-                      {song.artist}
-                    </Typography>
-                  </CardContent>
-                  <div className={classes.controls}>
-                    <IconButton
-                      aria-label="1star"
-                      onMouseEnter={() => this.handleChangeHover(1, song.id)}
-                      onMouseLeave={() => this.handleChangeHover(0, song.id)}
-                    >
-                      {song.rating >= 1 || song.hover >= 1 ? (
-                        <Star />
-                      ) : (
-                        <StarBorder />
-                      )}
-                    </IconButton>
-                    <IconButton
-                      aria-label="2star"
-                      onMouseEnter={() => this.handleChangeHover(2, song.id)}
-                      onMouseLeave={() => this.handleChangeHover(0, song.id)}
-                    >
-                      {song.rating >= 2 || song.hover >= 2 ? (
-                        <Star />
-                      ) : (
-                        <StarBorder />
-                      )}
-                    </IconButton>
-                    <IconButton
-                      aria-label="3star"
-                      onMouseEnter={() => this.handleChangeHover(3, song.id)}
-                      onMouseLeave={() => this.handleChangeHover(0, song.id)}
-                    >
-                      {song.rating >= 3 || song.hover >= 3 ? (
-                        <Star />
-                      ) : (
-                        <StarBorder />
-                      )}
-                    </IconButton>
-                    <IconButton
-                      aria-label="4star"
-                      onMouseEnter={() => this.handleChangeHover(4, song.id)}
-                      onMouseLeave={() => this.handleChangeHover(0, song.id)}
-                    >
-                      {song.rating >= 4 || song.hover >= 4 ? (
-                        <Star />
-                      ) : (
-                        <StarBorder />
-                      )}
-                    </IconButton>
-                    <IconButton
-                      aria-label="5star"
-                      onMouseEnter={() => this.handleChangeHover(5, song.id)}
-                      onMouseLeave={() => this.handleChangeHover(0, song.id)}
-                    >
-                      {song.rating >= 5 || song.hover >= 5 ? (
-                        <Star />
-                      ) : (
-                        <StarBorder />
-                      )}
-                    </IconButton>
-                  </div>
-                </div>
-                <CardMedia
-                  className={classes.cover}
-                  image={song.photo}
-                  title={song.album}
-                />
-              </Card>
-            </Grid>
-            <Grid item xs={4} />
-          </Fragment>
-        ))}
+        {songs
+          .sort(function(a, b) {
+            return b.rating - a.rating;
+          })
+          .map(song => (
+            <Fragment key={song.id}>
+              <Grid item xs={4} />
+              <Grid item xs={4}>
+                <Fade in={fade} timeout={1000}>
+                  <Card className={classes.card}>
+                    <div className={classes.details}>
+                      <CardContent className={classes.content}>
+                        <Typography
+                          component="h5"
+                          variant="h5"
+                          className={classes.title}
+                        >
+                          {song.name}
+                        </Typography>
+                        <Typography
+                          variant="subtitle1"
+                          color="textSecondary"
+                          className={classes.subtitle}
+                        >
+                          {song.artist}
+                        </Typography>
+                      </CardContent>
+                      <div className={classes.controls}>
+                        {[1, 2, 3, 4, 5].map(star => (
+                          <IconButton
+                            aria-label={`${star}star`}
+                            key={`${star}-song.id`}
+                            onMouseEnter={() =>
+                              song.rating < star
+                                ? this.handleChangeHover(star, song.id)
+                                : null
+                            }
+                            onMouseLeave={() =>
+                              song.rating < star
+                                ? this.handleChangeHover(0, song.id)
+                                : null
+                            }
+                            onClick={() => this.handleChangeRate(star, song.id)}
+                          >
+                            {song.rating >= star || song.hover >= star ? (
+                              <Star />
+                            ) : (
+                              <StarBorder />
+                            )}
+                          </IconButton>
+                        ))}
+                      </div>
+                    </div>
+                    <CardMedia
+                      className={classes.cover}
+                      image={song.photo}
+                      title={song.album}
+                    />
+                  </Card>
+                </Fade>
+              </Grid>
+              <Grid item xs={4} />
+            </Fragment>
+          ))}
       </Grid>
     );
   };
@@ -164,7 +151,7 @@ const mS = state => ({
   songs: state.songsReducer.songs
 });
 
-const mD = { changeHover };
+const mD = { changeHover, changeRate };
 
 SongsList = connect(
   mS,

@@ -102,7 +102,7 @@ const songsReducer = (state = initialState, action) => {
         ...state,
         songs: state.songs.map(song =>
           song.id === action.payload.id
-            ? { ...song, rating: action.payload.rating }
+            ? { ...song, rating: action.payload.rating, hover: 0 }
             : song
         )
       };
